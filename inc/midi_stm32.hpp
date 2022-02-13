@@ -37,8 +37,10 @@ public:
 	void set_tempo_bpm(uint8_t bpm);
 
 	// @brief Send a MIDI System Real-Time Start cmd
+	// and begin master heartbeat timer
 	void send_realtime_start_msg();
 	// @brief Send a MIDI System Real-Time Stop cmd
+	// and stop master heartbeat timer
 	void send_realtime_stop_msg();
 	// @brief Send a MIDI System Real-Time clock cmd
 	void send_realtime_clock_msg();

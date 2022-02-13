@@ -41,8 +41,13 @@ void Driver::set_tempo_bpm(uint8_t bpm)
 void Driver::send_realtime_start_msg()
 {
     LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Start));
-    LL_TIM_EnableCounter(m_midi_interface.get_tim_handle());
+    
     LL_TIM_EnableIT_UPDATE(m_midi_interface.get_tim_handle());
+    // LL_TIM_EnableIT_TRIG(m_midi_interface.get_tim_handle());
+    // LL_TIM_EnableIT_CC1(m_midi_interface.get_tim_handle());    
+    // LL_TIM_CC_EnableChannel(m_midi_interface.get_tim_handle(), LL_TIM_CHANNEL_CH1);
+    LL_TIM_EnableCounter(m_midi_interface.get_tim_handle());
+    
 }
 
 void Driver::send_realtime_stop_msg()
@@ -95,11 +100,12 @@ void Driver::midi_usart_isr()
 }
 
 void Driver::midi_tim_isr()
-
 {
-    // send_realtime_clock_msg();
     send_realtime_clock_msg();
     LL_TIM_ClearFlag_UPDATE(m_midi_interface.get_tim_handle());
+    LL_TIM_ClearFlag_TRIG(m_midi_interface.get_tim_handle());
+    LL_TIM_ClearFlag_CC1(m_midi_interface.get_tim_handle());
+
 }
 
 }  // namespace midi_stm32 
