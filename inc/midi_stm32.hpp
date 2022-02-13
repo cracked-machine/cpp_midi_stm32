@@ -36,20 +36,31 @@ public:
 	Driver(DeviceInterface &midi_usart_interface);
 	void set_tempo_bpm(uint8_t bpm);
 
+	// @brief Send a MIDI System Real-Time Start cmd
 	void send_realtime_start_msg();
+	// @brief Send a MIDI System Real-Time Stop cmd
 	void send_realtime_stop_msg();
+	// @brief Send a MIDI System Real-Time clock cmd
 	void send_realtime_clock_msg();
 
-	// see https://godbolt.org/z/dGohbjrzq
+	/// @brief Send MIDI note on/off command
+	/// @tparam NOTE_CMD This must be of type midi_stm32::NoteOn or midi_stm32::NoteOff
+	/// @param cmd The note on/off command combined with the channel
+	/// @param note The note pitch
+	/// @param velocity The note velocity
+	/// @note see https://godbolt.org/z/YW3K6jer7 for example usage
 	template<typename NOTE_CMD>
-	void Driver::send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
+	void send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity);
+	
 
 private:
 
+	// object containing pointer to USART/TIMER peripherals and GPIO pins
     DeviceInterface m_midi_interface;
 
-	std::array<uint8_t, 3> m_midi_pkt;
+	// std::array<uint8_t, 3> m_midi_pkt;
 
+	// @brief Helper to register USART callback from STM32G0InterruptManager
 	struct UsartIntHandler : public stm32::isr::STM32G0InterruptManager
 	{
         // @brief the parent manager class
@@ -71,6 +82,7 @@ private:
 		}        
 	};
 
+	// @brief Helper to register TIMER callback from STM32G0InterruptManager
 	struct TimIntHandler : public stm32::isr::STM32G0InterruptManager
 	{
 		// reference to parent class: midi_stm32::Driver
@@ -91,22 +103,14 @@ private:
 
 	// @brief UsartIntHandler instance
     UsartIntHandler m_midi_usart_isr_handler;
-
+	// @brief TimIntHandler instance
 	TimIntHandler m_midi_tim_isr_handler;
 
     // @brief function called back by UsartIntHandler->ISR()
     void midi_usart_isr();
+	// @brief function called back by TimIntHandler->ISR()
 	void midi_tim_isr();
 
-	enum class SystemRealTimeMessages
-	{
-		TimingClock = 	0xF8,
-		Start		=	0xFA,
-		Continue	= 	0xFB,
-		Stop		= 	0xFC,
-		ActiveSense	= 	0xFE,
-		Reset		= 	0xFF,
-	};
 };
 
 } // namespace midi_stm32 

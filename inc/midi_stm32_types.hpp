@@ -27,6 +27,17 @@
 namespace midi_stm32
 {
 
+// @brief Definitions for MIDI System Real-Time
+enum class SystemRealTimeMessages
+{
+	TimingClock = 	0xF8,
+	Start		=	0xFA,
+	Continue	= 	0xFB,
+	Stop		= 	0xFC,
+	ActiveSense	= 	0xFE,
+	Reset		= 	0xFF,
+};
+
 enum class NoteOn
 {
 	Ch1			= 	0x90,

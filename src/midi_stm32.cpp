@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include <midi_stm32.hpp>
+#include <usart_utils.hpp>
 
 namespace midi_stm32 
 {
@@ -30,7 +31,6 @@ Driver::Driver(DeviceInterface &midi_interface)
 {
     m_midi_tim_isr_handler.initialise_isr(this);
     LL_USART_Enable(m_midi_interface.get_usart_handle());
-
 }
 
 void Driver::set_tempo_bpm(uint8_t bpm)
@@ -57,31 +57,45 @@ void Driver::send_realtime_clock_msg()
     LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::TimingClock));
 }
 
-template<>
-void Driver::send_note_cmd(midi_stm32::NoteOn cmd, Note note, uint8_t velocity)
+template<typename NOTE_CMD>
+void Driver::send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
 {
-    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
-    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
-    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
+    if constexpr ((std::is_same_v<NOTE_CMD, midi_stm32::NoteOn>) ||
+                  (std::is_same_v<NOTE_CMD, midi_stm32::NoteOff>))  
+    {    
+        // check the TC and BSY flags and use an appropriate delay if waiting on one of these flags
+        uint16_t delay_us {250};
+
+        stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
+        stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
+        LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
+
+        stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
+        stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
+        LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
+
+        stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
+        stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
+        LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
+    }
+    else
+    {
+        // invalid NOTE_CMD type used!
+    }
+
 }
 
-template<>
-void Driver::send_note_cmd(midi_stm32::NoteOff cmd, Note note, uint8_t velocity)
-{
-    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
-    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
-    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
-}
 
 void Driver::midi_usart_isr()
 {
-	if ((m_midi_interface.get_usart_handle()->ISR & USART_ISR_RXNE_RXFNE) == USART_ISR_RXNE_RXFNE)
-    {
-        m_midi_pkt[0] = USART5->RDR; 	// grab first MIDI byte from USART
-    }
+	// if ((m_midi_interface.get_usart_handle()->ISR & USART_ISR_RXNE_RXFNE) == USART_ISR_RXNE_RXFNE)
+    // {
+    //     m_midi_pkt[0] = USART5->RDR; 	// grab first MIDI byte from USART
+    // }
 }
 
 void Driver::midi_tim_isr()
+
 {
     send_realtime_clock_msg();
     LL_TIM_ClearFlag_UPDATE(m_midi_interface.get_tim_handle());
