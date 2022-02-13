@@ -97,6 +97,7 @@ void Driver::midi_usart_isr()
 void Driver::midi_tim_isr()
 
 {
+    // send_realtime_clock_msg();
     send_realtime_clock_msg();
     LL_TIM_ClearFlag_UPDATE(m_midi_interface.get_tim_handle());
 }
