@@ -25,6 +25,7 @@
 #define __MIDI_STM32_HPP__
 
 #include <midi_stm32_device.hpp>
+#include <midi_stm32_types.hpp>
 
 namespace midi_stm32 
 {
@@ -38,6 +39,10 @@ public:
 	void send_realtime_start_msg();
 	void send_realtime_stop_msg();
 	void send_realtime_clock_msg();
+
+	// see https://godbolt.org/z/dGohbjrzq
+	template<typename NOTE_CMD>
+	void Driver::send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
 
 private:
 

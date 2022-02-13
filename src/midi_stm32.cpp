@@ -57,6 +57,22 @@ void Driver::send_realtime_clock_msg()
     LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::TimingClock));
 }
 
+template<>
+void Driver::send_note_cmd(midi_stm32::NoteOn cmd, Note note, uint8_t velocity)
+{
+    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
+    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
+    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
+}
+
+template<>
+void Driver::send_note_cmd(midi_stm32::NoteOff cmd, Note note, uint8_t velocity)
+{
+    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
+    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
+    LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
+}
+
 void Driver::midi_usart_isr()
 {
 	if ((m_midi_interface.get_usart_handle()->ISR & USART_ISR_RXNE_RXFNE) == USART_ISR_RXNE_RXFNE)
@@ -70,7 +86,5 @@ void Driver::midi_tim_isr()
     send_realtime_clock_msg();
     LL_TIM_ClearFlag_UPDATE(m_midi_interface.get_tim_handle());
 }
-
-
 
 }  // namespace midi_stm32 
