@@ -29,31 +29,23 @@ namespace midi_stm32
 Driver::Driver(DeviceInterface &midi_interface)
 :   m_midi_interface(midi_interface)
 {
-    m_midi_tim_isr_handler.initialise_isr(this);
     LL_USART_Enable(m_midi_interface.get_usart_handle());
 }
 
-void Driver::set_tempo_bpm(uint8_t bpm)
+void Driver::midi_usart_isr()
 {
-    m_midi_interface.get_tim_handle()->PSC = bpm;
+    // not implemented
 }
 
 void Driver::send_realtime_start_msg()
 {
+    // Send the MIDI Start msg
     LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Start));
-    
-    LL_TIM_EnableIT_UPDATE(m_midi_interface.get_tim_handle());
-    // LL_TIM_EnableIT_TRIG(m_midi_interface.get_tim_handle());
-    // LL_TIM_EnableIT_CC1(m_midi_interface.get_tim_handle());    
-    // LL_TIM_CC_EnableChannel(m_midi_interface.get_tim_handle(), LL_TIM_CHANNEL_CH1);
-    LL_TIM_EnableCounter(m_midi_interface.get_tim_handle());
-    
 }
 
 void Driver::send_realtime_stop_msg()
 {
-    LL_TIM_DisableIT_UPDATE(m_midi_interface.get_tim_handle());
-    LL_TIM_DisableCounter(m_midi_interface.get_tim_handle());
+    // Send the MIDI Stop msg
     LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Stop));
 }
 
@@ -87,24 +79,6 @@ void Driver::send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
     {
         // invalid NOTE_CMD type used!
     }
-
-}
-
-
-void Driver::midi_usart_isr()
-{
-	// if ((m_midi_interface.get_usart_handle()->ISR & USART_ISR_RXNE_RXFNE) == USART_ISR_RXNE_RXFNE)
-    // {
-    //     m_midi_pkt[0] = USART5->RDR; 	// grab first MIDI byte from USART
-    // }
-}
-
-void Driver::midi_tim_isr()
-{
-    send_realtime_clock_msg();
-    LL_TIM_ClearFlag_UPDATE(m_midi_interface.get_tim_handle());
-    LL_TIM_ClearFlag_TRIG(m_midi_interface.get_tim_handle());
-    LL_TIM_ClearFlag_CC1(m_midi_interface.get_tim_handle());
 
 }
 

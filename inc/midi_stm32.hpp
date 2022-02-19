@@ -36,12 +36,16 @@ public:
 	Driver(DeviceInterface &midi_usart_interface);
 	void set_tempo_bpm(uint8_t bpm);
 
-	// @brief Send a MIDI System Real-Time Start cmd
-	// and begin master heartbeat timer
+	// @brief Called by SequenceManager::start_loop().
+	// Sends a MIDI System Real-Time Start cmd
+	// and enable interrupts that send MIDI heartbeat msgs.
 	void send_realtime_start_msg();
+
 	// @brief Send a MIDI System Real-Time Stop cmd
-	// and stop master heartbeat timer
+	// and disable interrupts that send MIDI heartbeat msgs.
+	// This should be the reverse steps of send_realtime_start_msg()
 	void send_realtime_stop_msg();
+
 	// @brief Send a MIDI System Real-Time clock cmd
 	void send_realtime_clock_msg();
 
@@ -54,13 +58,14 @@ public:
 	template<typename NOTE_CMD>
 	void send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity);
 	
+	uint8_t get_midi_pulse_cnt() { return m_midi_pulse_cnt; }
+	void increment_midi_pulse_cnt() { m_midi_pulse_cnt++; }
+	void reset_midi_pulse_cnt() { m_midi_pulse_cnt = 0; }
 
 private:
 
 	// object containing pointer to USART/TIMER peripherals and GPIO pins
     DeviceInterface m_midi_interface;
-
-	// std::array<uint8_t, 3> m_midi_pkt;
 
 	// @brief Helper to register USART callback from STM32G0InterruptManager
 	struct UsartIntHandler : public stm32::isr::STM32G0InterruptManager
@@ -84,34 +89,14 @@ private:
 		}        
 	};
 
-	// @brief Helper to register TIMER callback from STM32G0InterruptManager
-	struct TimIntHandler : public stm32::isr::STM32G0InterruptManager
-	{
-		// reference to parent class: midi_stm32::Driver
-		Driver *m_midi_driver_ptr;
-
-		void initialise_isr(Driver *midi_driver_ptr)
-		{
-			m_midi_driver_ptr = midi_driver_ptr;
-			stm32::isr::STM32G0InterruptManager::register_handler(
-				m_midi_driver_ptr->m_midi_interface.get_tim_isr_type(),
-				this);
-		}
-		virtual void ISR()
-		{
-			m_midi_driver_ptr->midi_tim_isr();
-		}
-	};
-
 	// @brief UsartIntHandler instance
     UsartIntHandler m_midi_usart_isr_handler;
-	// @brief TimIntHandler instance
-	TimIntHandler m_midi_tim_isr_handler;
 
     // @brief function called back by UsartIntHandler->ISR()
     void midi_usart_isr();
-	// @brief function called back by TimIntHandler->ISR()
-	void midi_tim_isr();
+
+	// track the number of MIDI clk pulses sent	
+	uint8_t m_midi_pulse_cnt {0};
 
 };
 

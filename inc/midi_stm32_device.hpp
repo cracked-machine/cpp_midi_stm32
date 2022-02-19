@@ -50,26 +50,18 @@ class DeviceInterface
 public:
 	DeviceInterface(
 		USART_TypeDef *midi_usart, 
-		stm32::isr::STM32G0InterruptManager::InterruptType usart_isr_type,
-		TIM_TypeDef *midi_tim,
-		stm32::isr::STM32G0InterruptManager::InterruptType tim_isr_type)
+		stm32::isr::STM32G0InterruptManager::InterruptType usart_isr_type)
 	:	m_midi_usart(midi_usart),
-		m_usart_isr_type(usart_isr_type),
-		m_midi_tim(midi_tim),
-		m_tim_isr_type(tim_isr_type)
+		m_usart_isr_type(usart_isr_type)
 	{}
 
 	USART_TypeDef* get_usart_handle() { return m_midi_usart; }
 	stm32::isr::STM32G0InterruptManager::InterruptType get_usart_isr_type() { return m_usart_isr_type; }
-	TIM_TypeDef* get_tim_handle() { return m_midi_tim; }
-	stm32::isr::STM32G0InterruptManager::InterruptType get_tim_isr_type() { return m_tim_isr_type; }
 
 private:
 	USART_TypeDef *m_midi_usart;
 	stm32::isr::STM32G0InterruptManager::InterruptType m_usart_isr_type;
 
-	TIM_TypeDef *m_midi_tim;
-	stm32::isr::STM32G0InterruptManager::InterruptType m_tim_isr_type;
 
 };
 
