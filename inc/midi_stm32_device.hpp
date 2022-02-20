@@ -24,7 +24,7 @@
 #ifndef __MIDI_STM32_DRIVER_HPP__
 #define __MIDI_STM32_DRIVER_HPP__
 
-#include <stm32g0_interrupt_manager.hpp>
+#include <isr_manager_stm32g0.hpp>
 // disable dynamic allocation/copying
 #include <allocation_restricted_base.hpp>
 
@@ -45,22 +45,23 @@
 namespace midi_stm32 
 {
 
+template<typename DEVICE_ISR_ENUM>
 class DeviceInterface
 {
 public:
 	DeviceInterface(
 		USART_TypeDef *midi_usart, 
-		stm32::isr::STM32G0InterruptManager::InterruptType usart_isr_type)
+		DEVICE_ISR_ENUM usart_isr_type)
 	:	m_midi_usart(midi_usart),
 		m_usart_isr_type(usart_isr_type)
 	{}
 
 	USART_TypeDef* get_usart_handle() { return m_midi_usart; }
-	stm32::isr::STM32G0InterruptManager::InterruptType get_usart_isr_type() { return m_usart_isr_type; }
+	DEVICE_ISR_ENUM get_usart_isr_type() { return m_usart_isr_type; }
 
 private:
 	USART_TypeDef *m_midi_usart;
-	stm32::isr::STM32G0InterruptManager::InterruptType m_usart_isr_type;
+	DEVICE_ISR_ENUM m_usart_isr_type;
 
 
 };

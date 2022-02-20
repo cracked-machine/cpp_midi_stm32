@@ -24,65 +24,84 @@
 #ifndef __MIDI_STM32_HPP__
 #define __MIDI_STM32_HPP__
 
-#include <midi_stm32_device.hpp>
-#include <midi_stm32_types.hpp>
+#include <midi_common.hpp>
 
 namespace midi_stm32 
 {
 
-class Driver : public AllocationRestrictedBase
+template<typename DEVICE_ISR_ENUM>
+class Driver : public AllocationRestrictedBase, public CommonFunctions
 {
 public:
-	Driver(DeviceInterface &midi_usart_interface);
-	void set_tempo_bpm(uint8_t bpm);
+	Driver(DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
+	:   m_midi_interface(midi_interface)
+	{
+		LL_USART_Enable(m_midi_interface.get_usart_handle());
+	}	
 
-	// @brief Called by SequenceManager::start_loop().
-	// Sends a MIDI System Real-Time Start cmd
-	// and enable interrupts that send MIDI heartbeat msgs.
-	void send_realtime_start_msg();
+	void send_realtime_start_msg()
+	{
+		// Send the MIDI Start msg
+		LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Start));
+	}
 
-	// @brief Send a MIDI System Real-Time Stop cmd
-	// and disable interrupts that send MIDI heartbeat msgs.
-	// This should be the reverse steps of send_realtime_start_msg()
-	void send_realtime_stop_msg();
+	void send_realtime_stop_msg()
+	{
+		// Send the MIDI Stop msg
+		LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Stop));
+	}
 
-	// @brief Send a MIDI System Real-Time clock cmd
-	void send_realtime_clock_msg();
+	void send_realtime_clock_msg()
+	{
+		LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::TimingClock));
+	}
 
-	/// @brief Send MIDI note on/off command
-	/// @tparam NOTE_CMD This must be of type midi_stm32::NoteOn or midi_stm32::NoteOff
-	/// @param cmd The note on/off command combined with the channel
-	/// @param note The note pitch
-	/// @param velocity The note velocity
-	/// @note see https://godbolt.org/z/YW3K6jer7 for example usage
 	template<typename NOTE_CMD>
-	void send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity);
-	
-	uint8_t get_midi_pulse_cnt() { return m_midi_pulse_cnt; }
-	void increment_midi_pulse_cnt() { m_midi_pulse_cnt++; }
-	void reset_midi_pulse_cnt() { m_midi_pulse_cnt = 0; }
+	void send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
+	{
+		if constexpr ((std::is_same_v<NOTE_CMD, midi_stm32::NoteOn>) ||
+					(std::is_same_v<NOTE_CMD, midi_stm32::NoteOff>))  
+		{    
+			// check the TC and BSY flags and use an appropriate delay if waiting on one of these flags
+			uint16_t delay_us {250};
+
+			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
+			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
+			LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
+
+			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
+			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
+			LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
+
+			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
+			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
+			LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
+		}
+		else
+		{
+			// invalid NOTE_CMD type used!
+		}
+
+	}
 
 private:
 
-	// object containing pointer to USART/TIMER peripherals and GPIO pins
-    DeviceInterface m_midi_interface;
-
-	// @brief Helper to register USART callback from STM32G0InterruptManager
-	struct UsartIntHandler : public stm32::isr::STM32G0InterruptManager
+	// @brief Helper to register USART callback from InterruptManagerStm32g0
+	struct UsartIntHandler : public stm32::isr::InterruptManagerStm32Base<DEVICE_ISR_ENUM>
 	{
         // @brief the parent manager class
         Driver *m_midi_driver_ptr;
-		// @brief Register Driver with STM32G0InterruptManager
+		// @brief Register Driver with InterruptManagerStm32g0
 		// @param midi_driver_ptr the manager instance to register
 		void register_midi_driver(Driver *midi_driver_ptr)
 		{
 			m_midi_driver_ptr = midi_driver_ptr;
-			// register this internal handler class in stm32::isr::STM32G0InterruptManager
-			stm32::isr::STM32G0InterruptManager::register_handler(
+			// register this internal handler class in stm32::isr::InterruptManagerStm32g0
+			stm32::isr::InterruptManagerStm32Base<DEVICE_ISR_ENUM>::register_handler(
 				m_midi_driver_ptr->m_midi_interface.get_usart_isr_type(), 
 				this);
 		}        
-        // @brief The callback used by STM32G0InterruptManager
+        // @brief Definition of InterruptManagerStm32Base::ISR. This is called by stm32::isr::InterruptManagerStm32Base<DEVICE_ISR_ENUM> specialization 
 		virtual void ISR()
 		{
             m_midi_driver_ptr->midi_usart_isr();
@@ -93,10 +112,14 @@ private:
     UsartIntHandler m_midi_usart_isr_handler;
 
     // @brief function called back by UsartIntHandler->ISR()
-    void midi_usart_isr();
+    void midi_usart_isr()
+	{
+		// not implemented
+	}
 
-	// track the number of MIDI clk pulses sent	
-	uint8_t m_midi_pulse_cnt {0};
+
+	// object containing pointer to USART/TIMER peripherals and GPIO pins
+    DeviceInterface<DEVICE_ISR_ENUM> m_midi_interface;	
 
 };
 

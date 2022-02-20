@@ -20,11 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <midi_stm32.hpp>
+#include <midi_common.hpp>
 
 
 namespace midi_stm32 
 {
-    // common functions can be found in midi_common.hpp/cpp
 
-}  // namespace midi_stm32 
+
+
+
+} // namespace midi_stm32 
