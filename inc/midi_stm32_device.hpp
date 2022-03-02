@@ -24,9 +24,7 @@
 #ifndef __MIDI_STM32_DRIVER_HPP__
 #define __MIDI_STM32_DRIVER_HPP__
 
-#include <isr_manager_stm32g0.hpp>
-// disable dynamic allocation/copying
-#include <allocation_restricted_base.hpp>
+
 
 #include <usart_utils.hpp>
 

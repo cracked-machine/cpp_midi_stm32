@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <midi_common.hpp>
+#include <midi_stm32_common.hpp>
 
 
 namespace midi_stm32 

@@ -24,13 +24,16 @@
 #ifndef __MIDI_STM32_HPP__
 #define __MIDI_STM32_HPP__
 
-#include <midi_common.hpp>
+#include <midi_stm32_common.hpp>
+// disable dynamic allocation/copying
+#include <restricted_base.hpp>
+#include <isr_manager_stm32g0.hpp>
 
 namespace midi_stm32 
 {
 
 template<typename DEVICE_ISR_ENUM>
-class Driver : public AllocationRestrictedBase, public CommonFunctions
+class Driver : public RestrictedBase, public CommonFunctions
 {
 public:
 	Driver(DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
