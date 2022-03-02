@@ -28,19 +28,8 @@
 // disable dynamic allocation/copying
 #include <allocation_restricted_base.hpp>
 
+#include <usart_utils.hpp>
 
-#if defined(X86_UNIT_TESTING_ONLY)
-	// only used when unit testing on x86
-	#include <mock_cmsis.hpp>
-	#include <iostream>
-#else
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wvolatile"
-		#include "main.h"
-		#include "usart.h"	
-	#pragma GCC diagnostic pop
-    
-#endif
 
 namespace midi_stm32 
 {
