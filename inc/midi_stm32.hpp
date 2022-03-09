@@ -39,24 +39,33 @@ public:
 	Driver(DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
 	:   m_midi_interface(midi_interface)
 	{
-		LL_USART_Enable(m_midi_interface.get_usart_handle());
+		stm32::usart::enable_usart(m_midi_interface.get_usart_handle());
 	}	
 
 	void send_realtime_start_msg()
 	{
 		// Send the MIDI Start msg
-		LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Start));
+		stm32::usart::transmit_byte(
+			m_midi_interface.get_usart_handle(), 
+			static_cast<uint8_t>(SystemRealTimeMessages::Start)
+		);
 	}
 
 	void send_realtime_stop_msg()
 	{
 		// Send the MIDI Stop msg
-		LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::Stop));
+		stm32::usart::transmit_byte(
+			m_midi_interface.get_usart_handle(), 
+			static_cast<uint8_t>(SystemRealTimeMessages::Stop)
+		);
 	}
 
 	void send_realtime_clock_msg()
 	{
-		LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(SystemRealTimeMessages::TimingClock));
+		stm32::usart::transmit_byte(
+			m_midi_interface.get_usart_handle(), 
+			static_cast<uint8_t>(SystemRealTimeMessages::TimingClock)
+		);
 	}
 
 	template<typename NOTE_CMD>
@@ -70,15 +79,24 @@ public:
 
 			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
 			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
-			LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(cmd));
+			stm32::usart::transmit_byte(
+				m_midi_interface.get_usart_handle(), 
+				static_cast<uint8_t>(cmd)
+			);
 
 			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
 			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
-			LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(note));
+			stm32::usart::transmit_byte(
+				m_midi_interface.get_usart_handle(), 
+				static_cast<uint8_t>(note)
+			);
 
 			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
 			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
-			LL_USART_TransmitData8(m_midi_interface.get_usart_handle(), static_cast<uint8_t>(velocity));
+			stm32::usart::transmit_byte(
+				m_midi_interface.get_usart_handle(), 
+				static_cast<uint8_t>(velocity)
+			);
 		}
 		else
 		{
