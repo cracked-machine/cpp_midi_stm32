@@ -60,6 +60,15 @@ public:
 		);
 	}
 
+	void send_realtime_continue_msg()
+	{
+		// Send the MIDI Stop msg
+		stm32::usart::transmit_byte(
+			m_midi_interface.get_usart_handle(), 
+			static_cast<uint8_t>(SystemRealTimeMessages::Continue)
+		);
+	}	
+
 	void send_realtime_clock_msg()
 	{
 		stm32::usart::transmit_byte(

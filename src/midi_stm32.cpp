@@ -25,6 +25,7 @@
 
 namespace midi_stm32 
 {
-    // common functions can be found in midi_common.hpp/cpp
+    // common functions that don't need access to - DeviceInterface<DEVICE_ISR_ENUM> m_midi_interface - 
+    // can be found in midi_common.hpp/cpp
 
 }  // namespace midi_stm32 

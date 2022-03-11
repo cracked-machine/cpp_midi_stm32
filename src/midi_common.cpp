@@ -27,6 +27,4 @@ namespace midi_stm32
 {
 
 
-
-
 } // namespace midi_stm32 
