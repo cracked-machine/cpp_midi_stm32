@@ -36,7 +36,7 @@ template<typename DEVICE_ISR_ENUM>
 class Driver : public RestrictedBase, public CommonFunctions
 {
 public:
-	Driver(DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
+	explicit Driver(DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
 	:   m_midi_interface(midi_interface)
 	{
 		stm32::usart::enable_usart(m_midi_interface.get_usart_handle());
