@@ -36,7 +36,8 @@ template<typename DEVICE_ISR_ENUM>
 class Driver : public RestrictedBase, public CommonFunctions
 {
 public:
-	explicit Driver(DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
+	// cppcheck-suppress uninitMemberVar - m_midi_usart_isr_handler not fully enabled yet (https://github.com/cracked-machine/cpp_midi_stm32/issues/2)
+	explicit Driver(const DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
 	:   m_midi_interface(midi_interface)
 	{
 		stm32::usart::enable_usart(m_midi_interface.get_usart_handle());
