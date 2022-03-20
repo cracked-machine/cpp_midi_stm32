@@ -24,7 +24,9 @@
 #ifndef __MIDI_STM32_DRIVER_HPP__
 #define __MIDI_STM32_DRIVER_HPP__
 
-
+#ifdef X86_UNIT_TESTING_ONLY
+	#include <mock_cmsis.hpp>
+#endif
 
 #include <usart_utils.hpp>
 
