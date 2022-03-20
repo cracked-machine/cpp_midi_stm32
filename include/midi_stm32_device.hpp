@@ -25,6 +25,7 @@
 #define __MIDI_STM32_DRIVER_HPP__
 
 #ifdef X86_UNIT_TESTING_ONLY
+	// This file should contain CMSIS bit definitions
 	#include <mock_cmsis.hpp>
 #endif
 
