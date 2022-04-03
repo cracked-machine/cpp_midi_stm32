@@ -87,22 +87,16 @@ public:
 			// check the TC and BSY flags and use an appropriate delay if waiting on one of these flags
 			uint16_t delay_us {250};
 
-			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
-			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
 			stm32::usart::transmit_byte(
 				m_midi_interface.get_usart_handle(), 
 				static_cast<uint8_t>(cmd)
 			);
 
-			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
-			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
 			stm32::usart::transmit_byte(
 				m_midi_interface.get_usart_handle(), 
 				static_cast<uint8_t>(note)
 			);
 
-			stm32::usart::wait_for_tc_flag(m_midi_interface.get_usart_handle(), delay_us);
-			stm32::usart::wait_for_bsy_flag(m_midi_interface.get_usart_handle(), delay_us);
 			stm32::usart::transmit_byte(
 				m_midi_interface.get_usart_handle(), 
 				static_cast<uint8_t>(velocity)
