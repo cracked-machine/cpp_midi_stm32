@@ -24,13 +24,10 @@
 #ifndef __MIDI_STM32_DRIVER_HPP__
 #define __MIDI_STM32_DRIVER_HPP__
 
-#ifdef X86_UNIT_TESTING_ONLY
-	// This file should contain CMSIS bit definitions
-	#include <mock_cmsis.hpp>
-#endif
-
 #include <usart_utils.hpp>
 
+// defines "USED_API __attribute__((__used__))"
+#include <gnuc_ext_defs.hpp>
 
 namespace midi_stm32 
 {
@@ -39,15 +36,15 @@ template<typename DEVICE_ISR_ENUM>
 class DeviceInterface
 {
 public:
-	DeviceInterface(
+	USED_API DeviceInterface(
 		USART_TypeDef *midi_usart, 
 		DEVICE_ISR_ENUM usart_isr_type)
 	:	m_midi_usart(midi_usart),
 		m_usart_isr_type(usart_isr_type)
 	{}
 
-	USART_TypeDef* get_usart_handle() { return m_midi_usart; }
-	DEVICE_ISR_ENUM get_usart_isr_type() { return m_usart_isr_type; }
+	USED_API USART_TypeDef* get_usart_handle() { return m_midi_usart; }
+	USED_API DEVICE_ISR_ENUM get_usart_isr_type() { return m_usart_isr_type; }
 
 private:
 	USART_TypeDef *m_midi_usart;

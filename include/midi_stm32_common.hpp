@@ -36,9 +36,9 @@ class CommonFunctions
 
 public:
 
-	uint8_t get_midi_pulse_cnt() { return m_midi_pulse_cnt; }
-	void increment_midi_pulse_cnt() { m_midi_pulse_cnt++; }
-	void reset_midi_pulse_cnt() { m_midi_pulse_cnt = 0; }
+	USED_API uint8_t get_midi_pulse_cnt() { return m_midi_pulse_cnt; }
+	USED_API void increment_midi_pulse_cnt() { m_midi_pulse_cnt++; }
+	USED_API void reset_midi_pulse_cnt() { m_midi_pulse_cnt = 0; }
 
 protected:
 

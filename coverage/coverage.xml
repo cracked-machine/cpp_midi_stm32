@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE coverage SYSTEM 'http://cobertura.sourceforge.net/xml/coverage-04.dtd'>
+<coverage line-rate="0.2962962962962963" function-rate="0.21428571428571427" branch-rate="0.0" lines-covered="8" lines-valid="27" functions-covered="3" functions-valid="14" branches-covered="0" branches-valid="0" complexity="0.0" timestamp="1649539534" version="gcovr 5.1">
+  <sources>
+    <source>/home/chris/Projects/Embedded/BassStation/BassStationSequencerSW/extern/cpp_midi_stm32</source>
+  </sources>
+  <packages>
+    <package name="include" line-rate="0.2962962962962963" function-rate="0.6666666666666666" branch-rate="0.0" complexity="0.0">
+      <classes>
+        <class name="midi_stm32_common_hpp" filename="include/midi_stm32_common.hpp" line-rate="0.0" branch-rate="0.0" complexity="0.0">
+          <methods/>
+          <lines>
+            <line number="39" hits="0" branch="false"/>
+            <line number="40" hits="0" branch="false"/>
+            <line number="41" hits="0" branch="false"/>
+          </lines>
+        </class>
+        <class name="midi_stm32_device_hpp" filename="include/midi_stm32_device.hpp" line-rate="0.8" branch-rate="0.0" complexity="0.0">
+          <methods/>
+          <lines>
+            <line number="39" hits="1" branch="false"/>
+            <line number="43" hits="1" branch="false"/>
+            <line number="44" hits="1" branch="false"/>
+            <line number="46" hits="1" branch="false"/>
+            <line number="47" hits="0" branch="false"/>
+          </lines>
+        </class>
+        <class name="midi_stm32_hpp" filename="include/midi_stm32.hpp" line-rate="0.21052631578947367" branch-rate="0.0" complexity="0.0">
+          <methods/>
+          <lines>
+            <line number="40" hits="1" branch="false"/>
+            <line number="41" hits="1" branch="false"/>
+            <line number="43" hits="1" branch="false"/>
+            <line number="44" hits="1" branch="false"/>
+            <line number="46" hits="0" branch="false"/>
+            <line number="49" hits="0" branch="false"/>
+            <line number="55" hits="0" branch="false"/>
+            <line number="58" hits="0" branch="false"/>
+            <line number="64" hits="0" branch="false"/>
+            <line number="67" hits="0" branch="false"/>
+            <line number="73" hits="0" branch="false"/>
+            <line number="75" hits="0" branch="false"/>
+            <line number="121" hits="0" branch="false"/>
+            <line number="123" hits="0" branch="false"/>
+            <line number="125" hits="0" branch="false"/>
+            <line number="126" hits="0" branch="false"/>
+            <line number="130" hits="0" branch="false"/>
+            <line number="132" hits="0" branch="false"/>
+            <line number="140" hits="0" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>

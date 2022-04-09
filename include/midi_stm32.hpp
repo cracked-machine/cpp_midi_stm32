@@ -37,13 +37,13 @@ class Driver : public RestrictedBase, public CommonFunctions
 {
 public:
 	// cppcheck-suppress uninitMemberVar - m_midi_usart_isr_handler not fully enabled yet (https://github.com/cracked-machine/cpp_midi_stm32/issues/2)
-	explicit Driver(const DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
+	USED_API explicit Driver(const DeviceInterface<DEVICE_ISR_ENUM> &midi_interface)
 	:   m_midi_interface(midi_interface)
 	{
 		stm32::usart::enable_usart(m_midi_interface.get_usart_handle());
 	}	
 
-	void send_realtime_start_msg()
+	USED_API void send_realtime_start_msg()
 	{
 		// Send the MIDI Start msg
 		stm32::usart::transmit_byte(
@@ -52,7 +52,7 @@ public:
 		);
 	}
 
-	void send_realtime_stop_msg()
+	USED_API void send_realtime_stop_msg()
 	{
 		// Send the MIDI Stop msg
 		stm32::usart::transmit_byte(
@@ -61,7 +61,7 @@ public:
 		);
 	}
 
-	void send_realtime_continue_msg()
+	USED_API void send_realtime_continue_msg()
 	{
 		// Send the MIDI Stop msg
 		stm32::usart::transmit_byte(
@@ -70,7 +70,7 @@ public:
 		);
 	}	
 
-	void send_realtime_clock_msg()
+	USED_API void send_realtime_clock_msg()
 	{
 		stm32::usart::transmit_byte(
 			m_midi_interface.get_usart_handle(), 
@@ -79,7 +79,7 @@ public:
 	}
 
 	template<typename NOTE_CMD>
-	void send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
+	USED_API void send_note_cmd(NOTE_CMD cmd, Note note, uint8_t velocity)
 	{
 		if constexpr ((std::is_same_v<NOTE_CMD, midi_stm32::NoteOn>) ||
 					(std::is_same_v<NOTE_CMD, midi_stm32::NoteOff>))  
@@ -118,7 +118,7 @@ private:
         Driver *m_midi_driver_ptr;
 		// @brief Register Driver with InterruptManagerStm32g0
 		// @param midi_driver_ptr the manager instance to register
-		void register_midi_driver(Driver *midi_driver_ptr)
+		USED_API void register_midi_driver(Driver *midi_driver_ptr)
 		{
 			m_midi_driver_ptr = midi_driver_ptr;
 			// register this internal handler class in stm32::isr::InterruptManagerStm32g0
@@ -127,7 +127,7 @@ private:
 				this);
 		}        
         // @brief Definition of InterruptManagerStm32Base::ISR. This is called by stm32::isr::InterruptManagerStm32Base<DEVICE_ISR_ENUM> specialization 
-		virtual void ISR()
+		USED_API virtual void ISR()
 		{
             m_midi_driver_ptr->midi_usart_isr();
 		}        
@@ -137,7 +137,7 @@ private:
     UsartIntHandler m_midi_usart_isr_handler;
 
     // @brief function called back by UsartIntHandler->ISR()
-    void midi_usart_isr()
+    USED_API void midi_usart_isr()
 	{
 		// not implemented
 	}
