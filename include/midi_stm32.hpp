@@ -85,7 +85,7 @@ public:
 					(std::is_same_v<NOTE_CMD, midi_stm32::NoteOff>))  
 		{    
 			// check the TC and BSY flags and use an appropriate delay if waiting on one of these flags
-			uint16_t delay_us {250};
+			[[maybe_unused]] uint16_t delay_us {250};
 
 			stm32::usart::transmit_byte(
 				m_midi_interface.get_usart_handle(), 
