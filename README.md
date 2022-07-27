@@ -16,3 +16,7 @@ Add this repo ([cpp_midi_stm32](https://github.com/cracked-machine/cpp_midi_stm3
 ```
 add_subdirectory(cpp_midi_stm32)
 ```
+
+#### External Dependencies
+
+[Embedded Utils](https://github.com/cracked-machine/embedded_utils)
