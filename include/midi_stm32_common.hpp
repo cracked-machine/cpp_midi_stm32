@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 #ifndef __MIDI_COMMON_HPP__
 #define __MIDI_COMMON_HPP__
 
@@ -28,28 +27,23 @@
 #include <midi_stm32_types.hpp>
 #include <usart_utils.hpp>
 
-namespace midi_stm32 
+namespace midi_stm32
 {
 
 class CommonFunctions
 {
 
 public:
-
-	uint8_t get_midi_pulse_cnt();
-	void increment_midi_pulse_cnt();
-	void reset_midi_pulse_cnt();
+  uint8_t get_midi_pulse_cnt();
+  void increment_midi_pulse_cnt();
+  void reset_midi_pulse_cnt();
 
 protected:
-
-
 private:
-
-	// track the number of MIDI clk pulses sent	
-	uint8_t m_midi_pulse_cnt {0};
+  // track the number of MIDI clk pulses sent
+  uint8_t m_midi_pulse_cnt{0};
 };
 
-}    // namespace midi_stm32 
-
+} // namespace midi_stm32
 
 #endif // __MIDI_COMMON_HPP__

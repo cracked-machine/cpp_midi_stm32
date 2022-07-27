@@ -22,23 +22,13 @@
 
 #include <midi_stm32_common.hpp>
 
-
-namespace midi_stm32 
+namespace midi_stm32
 {
 
-uint8_t CommonFunctions::get_midi_pulse_cnt() 
-{ 
-	return m_midi_pulse_cnt; 
-}
+uint8_t CommonFunctions::get_midi_pulse_cnt() { return m_midi_pulse_cnt; }
 
-void CommonFunctions::increment_midi_pulse_cnt() 
-{ 
-    m_midi_pulse_cnt++; 
-}
+void CommonFunctions::increment_midi_pulse_cnt() { m_midi_pulse_cnt++; }
 
-void CommonFunctions::reset_midi_pulse_cnt() 
-{ 
-    m_midi_pulse_cnt = 0; 
-}
+void CommonFunctions::reset_midi_pulse_cnt() { m_midi_pulse_cnt = 0; }
 
-} // namespace midi_stm32 
+} // namespace midi_stm32

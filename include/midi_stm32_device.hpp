@@ -20,37 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 #ifndef __MIDI_STM32_DRIVER_HPP__
 #define __MIDI_STM32_DRIVER_HPP__
 
 #include <usart_utils.hpp>
 
-namespace midi_stm32 
+namespace midi_stm32
 {
 
-template<typename DEVICE_ISR_ENUM>
+template <typename DEVICE_ISR_ENUM>
 class DeviceInterface
 {
 public:
-	DeviceInterface(
-		USART_TypeDef *midi_usart, 
-		DEVICE_ISR_ENUM usart_isr_type)
-	:	m_midi_usart(midi_usart),
-		m_usart_isr_type(usart_isr_type)
-	{}
+  DeviceInterface(USART_TypeDef *midi_usart, DEVICE_ISR_ENUM usart_isr_type)
+      : m_midi_usart(midi_usart),
+        m_usart_isr_type(usart_isr_type)
+  {
+  }
 
-	USART_TypeDef* get_usart_handle() { return m_midi_usart; }
-	DEVICE_ISR_ENUM get_usart_isr_type() { return m_usart_isr_type; }
+  USART_TypeDef *get_usart_handle() { return m_midi_usart; }
+  DEVICE_ISR_ENUM get_usart_isr_type() { return m_usart_isr_type; }
 
 private:
-	USART_TypeDef *m_midi_usart;
-	DEVICE_ISR_ENUM m_usart_isr_type;
-
-
+  USART_TypeDef *m_midi_usart;
+  DEVICE_ISR_ENUM m_usart_isr_type;
 };
 
-} // namespace midi_stm32 
-    
+} // namespace midi_stm32
 
 #endif // __MIDI_STM32_DRIVER_HPP__
